@@ -23,19 +23,23 @@ public class ServiceHandler extends HttpServlet {
 	******/
 	Boolean test = false;
 
-	private String environmentalVariable = null; //Demo purposes only. Rename this variable to something more appropriate
+	private String serverAddress = null;
+	private String serviceName = null;
 	private static long jobNumber = 0;
+	//An Asynchronous Message Facade
+	private static Queue<Request> inqueue = new LinkedList<Request>();
+	private static Map<String, String> outqueue = new LinkedHashMap<String, String>();
+	//Start Client thread & pass in queues.
 
 
 	// Run on servlet class initialized.
 	public void init() throws ServletException {
-		ServletContext ctx = getServletContext(); //The servlet context is the application itself.
-		
-		//Reads the value from the <context-param> in web.xml. Any application scope variables 
-		//defined in the web.xml can be read in as follows:
-		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE"); 
+		ServletContext ctx = getServletContext(); 
+		// Load in server address and service name from the <context-param> tags in web.xml. Any application scope variables 
+		serverAddress = ctx.getInitParameter("SERVER_ADDRESS"); 
+		serviceName = ctx.getInitParameter("SERVICE_NAME"); 
+		// Pass on to Client thread
 	}
-
 
 	// HTTP Methods.
 
@@ -44,49 +48,34 @@ public class ServiceHandler extends HttpServlet {
 		PrintWriter out = resp.getWriter(); 
 		String str = req.getParameter("searchStr");
 		String taskNumber = req.getParameter("frmTaskNumber");
+		int counter = 1;
 		
-		//We could use the following to track asynchronous tasks. Comment it out otherwise...
+		//Check if task number does not exist 
 		if (taskNumber == null){
 			taskNumber = new String("T" + jobNumber);
 			jobNumber++;
-
-			int counter = 1;
-
-			/*if (req.getParameter("counter") != null){
-				counter = Integer.parseInt(req.getParameter("counter"));
-				counter++;
-			}*/
-
 			printLoadingPage(out, str, taskNumber, counter);						
 			
 			//Add job to in-queue
-		}else{
-			//RequestDispatcher dispatcher = req.getRequestDispatcher("/poll");
-			//dispatcher.forward(req,resp);
+		} else{
+			//Check out-queue for finished job with the given taskNumber and add to queue
 			
-			//Check out-queue for finished job with the given taskNumber
-			
-			//Let's pretend for now.
+			//Let's pretend for now - out-queue doen't have it for now.
 			if(test)
 			{
-				Client c = new Client();
-				String result = null;
-				try{
-					result = c.getDesc(str);
-				} catch(Exception e){
-					result = "Uh oh";
-				}
+				Request r = new SearchRequest(taskNumber, str);
+				inqueue.offer(r);
+				Client c = new Client(serverAddress+serviceName, r);
+				String result = c.getDesc();
+				
 				printResultPage(out, str, taskNumber, result);	
-			}else{
-
+			} else{
 				test = true;
-				int counter = 1;
 
 				if (req.getParameter("counter") != null){
 					counter = Integer.parseInt(req.getParameter("counter"));
 					counter++;
 				}
-
 				printLoadingPage(out, str, taskNumber, counter);	
 			}					
 		}
@@ -108,12 +97,13 @@ public class ServiceHandler extends HttpServlet {
 	}
 	public void printScript(PrintWriter out){
 		out.print("<script>");
-		out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\", 10000);"); //Refresh every 5 seconds
+		//Refresh by submitting every 10 seconds.
+		out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\", 10000);");
 		out.print("</script>");
 	}
 	public void printLoadingPage(PrintWriter out, String str, String taskNumber, Integer counter){
 		printHeader(out);
-		//Output some headings at the top of the generated page
+		//Output some headings at the top of the generated page.
 		out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
 		out.print("<H3>String: " + str + "</H3>");
 		//Output some useful information for you (yes YOU!)
