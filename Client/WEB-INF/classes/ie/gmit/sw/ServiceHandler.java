@@ -66,7 +66,7 @@ public class ServiceHandler extends HttpServlet {
 		}
 	}
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		doGet(req, resp);
+		//doGet(req, resp);
  	}
 
 	// Handler Methods

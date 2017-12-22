@@ -16,11 +16,6 @@
 
   <!-- A context is a variable with application wide scope. These can be accessed easily in a Servlet or JSP page-->
   <context-param>
-    <param-name>SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE</param-name>
-    <param-value>Some Value</param-value>
-  </context-param>
-
-  <context-param>
     <param-name>SERVER_ADDRESS</param-name>
     <param-value>rmi://127.0.0.1:1099/</param-value>
   </context-param>

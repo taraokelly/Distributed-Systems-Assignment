@@ -3,7 +3,7 @@
 <div class="animated bounceInDown" style="font-size:32pt; font-family:arial; color:#990000; font-weight:bold">Dictionary Lookup Service</div>
 
 </p>&nbsp;</p>&nbsp;</p>
-
+<center><font size="+2" color="grey">**The Add, Modify and Delete queries have yet to be implemented client side.**</font></center>
 <table width="600" cellspacing="0" cellpadding="7" border="0">
 	<tr>
 		<td valign="top">
@@ -43,7 +43,7 @@
 	<tr>
 			<td valign="top">
 				
-				<form bgcolor="white" method="POST" enctype="multipart/form-data">
+				<form bgcolor="white" method="POST" enctype="multipart/form-data" onsubmit="myFunction(Delete)">
 					<fieldset>
 						<legend><h3>Delete</h3></legend>
 						<b>Word:</b><br>
@@ -59,7 +59,7 @@
 	<tr>
 			<td valign="top">
 				
-				<form bgcolor="white" method="POST" enctype="multipart/form-data">
+				<form bgcolor="white" method="POST" enctype="multipart/form-data" onsubmit="myFunction(Modify)">
 					<fieldset>
 						<legend><h3>Modify</h3></legend>
 						<b>String:</b><br>
@@ -76,5 +76,6 @@
 			</td>
 		</tr>
 </table>
+<input name="query" type="hidden" value="">
 <%@ include file="includes/footer.jsp" %>
 
