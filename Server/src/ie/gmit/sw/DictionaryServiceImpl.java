@@ -10,8 +10,8 @@ public class DictionaryServiceImpl extends UnicastRemoteObject implements Dictio
 	}
 
 	@Override
-	public String search(String filename) throws RemoteException {
-		return "DoriTOE";
+	public String search(String word) throws RemoteException {
+		return "String not found";
 	}
 
 }
