@@ -11,26 +11,15 @@ import java.util.Map;
 import java.util.Queue;
 
 public class ServiceHandler extends HttpServlet {
-	/* Declare any shared objects here. For example any of the following can be handled from 
-	 * this context by instantiating them at a servlet level:
-	 *   1) An Asynchronous Message Facade: declare the IN and OUT queues or MessageQueue
-	 *   2) An Chain of Responsibility: declare the initial handler or a full chain object
-	 *   1) A Proxy: Declare a shared proxy here and a request proxy inside doGet()
-	 */
-
-	/*****
-	DON'T FORGET TO DELETE
-	******/
-	Boolean test = false;
 
 	private String serverAddress = null;
 	private String serviceName = null;
 	private static long jobNumber = 0;
 	//An Asynchronous Message Facade
-	private static Queue<Request> inqueue = new LinkedList<Request>();
+	private static volatile Queue<Request> inqueue = new LinkedList<Request>();
 	private static Map<String, String> outqueue = new LinkedHashMap<String, String>();
-	
 	//Start Client thread & pass in queues.
+	private Thread client;
 
 
 	// Run on servlet class initialized.
@@ -39,7 +28,11 @@ public class ServiceHandler extends HttpServlet {
 		// Load in server address and service name from the <context-param> tags in web.xml. Any application scope variables 
 		serverAddress = ctx.getInitParameter("SERVER_ADDRESS"); 
 		serviceName = ctx.getInitParameter("SERVICE_NAME"); 
-		// Pass on to Client thread
+		//Start Client thread & pass in queues.
+		client = new Thread(new Client(serverAddress+serviceName,inqueue, outqueue));
+		if (!client.isAlive()){
+			client.start();
+		}
 	}
 
 	// HTTP Methods.
@@ -56,12 +49,9 @@ public class ServiceHandler extends HttpServlet {
 		if (taskNumber == null){
 			taskNumber = new String("T" + jobNumber);
 			jobNumber++;
-
 			//Add job to in-queue
 			Request r = new SearchRequest(taskNumber, str);
 			inqueue.offer(r);
-			Client c = new Client(serverAddress+serviceName, inqueue, outqueue);
-			c.getDesc();
 			printLoadingPage(out, str, taskNumber, counter);						
 		} else{
 			//Check out-queue for finished job with the given taskNumber and add to queue
@@ -74,7 +64,7 @@ public class ServiceHandler extends HttpServlet {
 					counter++;
 				}
 				printLoadingPage(out, str, taskNumber, counter);	
-			}					
+			}				
 		}
 	}
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
