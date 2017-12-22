@@ -8,30 +8,29 @@ import java.util.Queue;
 public class Client {
 
     String uri;
-    Request r;
+    private Queue<Request> inqueue;
+	private Map<String, String> outqueue;
 
-    public Client(String uri, Request r){
+    public Client(String uri, Queue<Request> in, Map<String, String> out){
         //pass in address here
         this.uri = uri;
-        this.r = r;
+        this.inqueue = in;
+		this.outqueue = out;
+
     }
 
     //@Override
 	//public void run() { }
-	public String getDesc(){
-		
-        /*
-        //Ask the registry running on localhost and listening in port 1099 for the instance of
-		//the FileService object that is bound to the RMI registry with the name fileService.
-		DictionaryService ds = (DictionaryService) Naming.lookup(uri);
+	public void getDesc() {
 
-		//Make a remote method invocation to ask for the list of files
-		//The ArrayList of file names is transferred over the network in serialized form
-		String desc = ds.search(str);*/
+        Request r = inqueue.poll();
 
-        String result = r.doRequest(uri);
+        if(r != null){
+            String result = r.doRequest(uri);
+            outqueue.put(r.getTaskNumber(), result);
+        }
 
-		return result;
+		//return result;
 	}
 
 }

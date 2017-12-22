@@ -29,6 +29,7 @@ public class ServiceHandler extends HttpServlet {
 	//An Asynchronous Message Facade
 	private static Queue<Request> inqueue = new LinkedList<Request>();
 	private static Map<String, String> outqueue = new LinkedHashMap<String, String>();
+	
 	//Start Client thread & pass in queues.
 
 
@@ -49,29 +50,25 @@ public class ServiceHandler extends HttpServlet {
 		String str = req.getParameter("searchStr");
 		String taskNumber = req.getParameter("frmTaskNumber");
 		int counter = 1;
+		String result = outqueue.get(taskNumber);
 		
 		//Check if task number does not exist 
 		if (taskNumber == null){
 			taskNumber = new String("T" + jobNumber);
 			jobNumber++;
-			printLoadingPage(out, str, taskNumber, counter);						
-			
+
 			//Add job to in-queue
+			Request r = new SearchRequest(taskNumber, str);
+			inqueue.offer(r);
+			Client c = new Client(serverAddress+serviceName, inqueue, outqueue);
+			c.getDesc();
+			printLoadingPage(out, str, taskNumber, counter);						
 		} else{
 			//Check out-queue for finished job with the given taskNumber and add to queue
-			
-			//Let's pretend for now - out-queue doen't have it for now.
-			if(test)
-			{
-				Request r = new SearchRequest(taskNumber, str);
-				inqueue.offer(r);
-				Client c = new Client(serverAddress+serviceName, r);
-				String result = c.getDesc();
-				
+			if(result !=null)
+			{	
 				printResultPage(out, str, taskNumber, result);	
 			} else{
-				test = true;
-
 				if (req.getParameter("counter") != null){
 					counter = Integer.parseInt(req.getParameter("counter"));
 					counter++;
