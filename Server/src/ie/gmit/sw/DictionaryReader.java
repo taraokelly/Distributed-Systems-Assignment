@@ -1,7 +1,8 @@
 package ie.gmit.sw;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,8 @@ public class DictionaryReader {
 	public Map<String, String> load(){
 		try{
 			Map<String,String> dictionary = new HashMap<String, String>();
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+			InputStream in = getClass().getResourceAsStream(fileName);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 			
 			while(true){
 			   String line = bufferedReader.readLine();
