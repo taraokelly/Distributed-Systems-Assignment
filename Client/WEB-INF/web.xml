@@ -43,7 +43,7 @@
     <url-pattern>/doProcess</url-pattern>
   </servlet-mapping>
 
-  <servlet>
+ <!-- <servlet>
     <servlet-name>service-poll-handler</servlet-name>
     <servlet-class>ie.gmit.sw.ServicePollHandler</servlet-class>
     <load-on-startup>0</load-on-startup>
@@ -52,5 +52,5 @@
   <servlet-mapping>
     <servlet-name>service-poll-handler</servlet-name>
     <url-pattern>/poll</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
 </web-app>
