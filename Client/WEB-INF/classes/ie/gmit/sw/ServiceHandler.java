@@ -52,10 +52,10 @@ public class ServiceHandler extends HttpServlet {
 
 			int counter = 1;
 
-			if (req.getParameter("counter") != null){
+			/*if (req.getParameter("counter") != null){
 				counter = Integer.parseInt(req.getParameter("counter"));
 				counter++;
-			}
+			}*/
 
 			printLoadingPage(out, str, taskNumber, counter);						
 			
