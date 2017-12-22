@@ -21,13 +21,21 @@ public class ServicePollHandler extends HttpServlet {
 			counter++;
 		}
 
+		Client c = new Client();
+		String result = null;
+		try{
+			result = c.getDesc(str);
+		} catch(Exception e){
+			result = "Uh oh";
+		}
+
 		out.print("<html><head><title>A JEE Application for Measuring Document Similarity</title>");	
 		out.print("</head>");		
 		out.print("<body>");
 		out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
 		out.print("<H3>Search query: " + str + "</H3>");
 		out.print("<b><font color=\"ff0000\">A total of " + counter + " polls have been made for this request.</font></b> ");
-		out.print("Place the final response here... a nice table (or graphic!) of the document similarity...");
+		out.print(result);
 		out.print("<br><br><a class=\"button\" href=\"index.jsp\">Make Another Query</a>");
 		out.print("<form name=\"frmRequestDetails\">");
 		out.print("<input name=\"searchStr\" type=\"hidden\" value=\"" + str + "\">");

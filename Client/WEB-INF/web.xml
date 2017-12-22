@@ -20,6 +20,16 @@
     <param-value>Some Value</param-value>
   </context-param>
 
+  <context-param>
+    <param-name>SERVER_ADDRESS</param-name>
+    <param-value>rmi://127.0.0.1:1099/</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>SERVICE_NAME</param-name>
+    <param-value>dictionaryService</param-value>
+  </context-param>
+
   <!-- A servlet class must be bound to a name -->
   <servlet>
     <servlet-name>service-request-handler</servlet-name>
