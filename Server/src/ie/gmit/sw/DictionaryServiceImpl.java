@@ -22,4 +22,25 @@ public class DictionaryServiceImpl extends UnicastRemoteObject implements Dictio
 	    return "Word not found.";	  
 	}
 
+	@Override
+	public String add(String word, String Description) throws RemoteException {
+		
+		return "Failed to add " + word + " to dictionary.";
+	}
+
+	@Override
+	public String modify(String word, String Description) throws RemoteException {
+		return "Failed to add " + word + " to dictionary.";
+	}
+
+	@Override
+	public String delete(String word) throws RemoteException {
+		return "Failed to add " + word + " to dictionary.";
+	}
+	
+	public synchronized String write(String word, String Description){
+		// Here we will make the changes to the shared dictionary resources.
+		return null;
+	}
+
 }
