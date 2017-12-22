@@ -16,11 +16,10 @@ public class ServiceHandler extends HttpServlet {
 	private String serviceName = null;
 	private static long jobNumber = 0;
 	//An Asynchronous Message Facade
-	private static volatile Queue<Request> inqueue = new LinkedList<Request>();
+	private static Queue<Request> inqueue = new LinkedList<Request>();
 	private static Map<String, String> outqueue = new LinkedHashMap<String, String>();
 	//Start Client thread & pass in queues.
 	private Thread client;
-
 
 	// Run on servlet class initialized.
 	public void init() throws ServletException {
@@ -30,9 +29,7 @@ public class ServiceHandler extends HttpServlet {
 		serviceName = ctx.getInitParameter("SERVICE_NAME"); 
 		//Start Client thread & pass in queues.
 		client = new Thread(new Client(serverAddress+serviceName,inqueue, outqueue));
-		if (!client.isAlive()){
-			client.start();
-		}
+		client.start();
 	}
 
 	// HTTP Methods.
@@ -44,6 +41,7 @@ public class ServiceHandler extends HttpServlet {
 		String taskNumber = req.getParameter("frmTaskNumber");
 		int counter = 1;
 		String result = outqueue.get(taskNumber);
+		String query = "Search";
 		
 		//Check if task number does not exist 
 		if (taskNumber == null){
@@ -57,7 +55,7 @@ public class ServiceHandler extends HttpServlet {
 			//Check out-queue for finished job with the given taskNumber and add to queue
 			if(result !=null)
 			{	
-				printResultPage(out, str, taskNumber, result);	
+				printResultPage(out, query, str, taskNumber, result);	
 			} else{
 				if (req.getParameter("counter") != null){
 					counter = Integer.parseInt(req.getParameter("counter"));
@@ -74,7 +72,8 @@ public class ServiceHandler extends HttpServlet {
 	// Handler Methods
 
 	public void printHeader(PrintWriter out){
-		out.print("<html><head><title>A JEE Application for Measuring Document Similarity</title>");	
+		out.print("<html><head><title>A JEE Application for Measuring Document Similarity</title>");
+		out.print("<style>h1{color:#990000;} h3{color:grey;} .wrapper{margin: 0 auto; width:50%; min-width: 600px; margin-top: 50px; text-align:center;} html{font-size:18px;}</style>");
 		out.print("</head>");		
 		out.print("<body>");
 	}
@@ -91,10 +90,9 @@ public class ServiceHandler extends HttpServlet {
 	public void printLoadingPage(PrintWriter out, String str, String taskNumber, Integer counter){
 		printHeader(out);
 		//Output some headings at the top of the generated page.
+		out.print("<div class=\"wrapper\">");
 		out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
 		out.print("<H3>String: " + str + "</H3>");
-		//Output some useful information for you (yes YOU!)
-		out.print("<div id=\"r\"></div>");
 		//We can also dynamically write out a form using hidden form fields. The form itself is not
 		//visible in the browser, but the JavaScript below can see it.
 		out.print("<form name=\"frmRequestDetails\" action=\"doProcess\">");
@@ -102,19 +100,22 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<input name=\"frmTaskNumber\" type=\"hidden\" value=\"" + taskNumber + "\">");
 		out.print("<input name=\"counter\" type=\"hidden\" value=\"" + counter + "\">");
 		out.print("</form>");	
+		out.print("</div>");
 		printFooter(out);
 		printScript(out);
 	}
-	public void printResultPage(PrintWriter out, String str, String taskNumber, String result){
+	public void printResultPage(PrintWriter out, String query, String str, String taskNumber, String result){
 		printHeader(out);
-		out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
-		out.print("<H3>Search query: " + str + "</H3>");
-		out.print(result);
+		out.print("<div class=\"wrapper\">");
+		out.print("<H1>Request processed for Job#: " + taskNumber + "</H1>");
+		out.print("<H3>"+ query + " query: " + str + "</H3>");
+		out.print("<font size=\"+2\"><b>Response:</b> " + result +"</font>");
 		out.print("<br><br><a class=\"button\" href=\"index.jsp\">Make Another Query</a>");
 		out.print("<form name=\"frmRequestDetails\">");
 		out.print("<input name=\"searchStr\" type=\"hidden\" value=\"" + str + "\">");
 		out.print("<input name=\"frmTaskNumber\" type=\"hidden\" value=\"" + taskNumber + "\">");
 		out.print("</form>");
+		out.print("</div>");
 		printFooter(out);
 	}
 }

@@ -1,6 +1,5 @@
 package ie.gmit.sw;
 
-import java.rmi.Naming;
 import java.util.Map;
 import java.util.Queue;
 
